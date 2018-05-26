@@ -51,8 +51,11 @@ class HTTPServerChecker {
                 //server switchs from DOWN to UP
                 if !self.isUp {
                     self.isUp = true
+                    print("_degug: TRANSITION UP")
                     if let handler = self.optionalHandler {
-                        handler(nil)
+                        DispatchQueue.main.async{
+                            handler(nil)
+                        }
                     }
                 }
                 
@@ -68,8 +71,11 @@ class HTTPServerChecker {
                 //server switchs from UP to DOWN
                 if self.isUp {
                     self.isUp = false
+                    print("_degug: TRANSITION DOWN")
                     if let handler = self.optionalHandler {
-                        handler(error)
+                        DispatchQueue.main.async{
+                            handler(error)
+                        }
                     }
                 }
                 

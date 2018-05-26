@@ -57,12 +57,12 @@
 			isa = PBXGroup;
 			children = (
 				2C42463C20B977EC00F17969 /* AppDelegate.swift */,
+				2C42464E20B9810000F17969 /* HTTPServerChecker.swift */,
 				2C42463E20B977ED00F17969 /* ViewController.swift */,
 				2C42464020B977ED00F17969 /* Main.storyboard */,
 				2C42464320B977ED00F17969 /* Assets.xcassets */,
 				2C42464520B977ED00F17969 /* LaunchScreen.storyboard */,
 				2C42464820B977ED00F17969 /* Info.plist */,
-				2C42464E20B9810000F17969 /* HTTPServerChecker.swift */,
 			);
 			path = CheckConnectionServer;
 			sourceTree = "<group>";
@@ -285,6 +285,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = S3W6G82CK9;
 				INFOPLIST_FILE = CheckConnectionServer/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -302,6 +303,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = S3W6G82CK9;
 				INFOPLIST_FILE = CheckConnectionServer/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
