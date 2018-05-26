@@ -10,17 +10,23 @@ import UIKit
 
 class ViewController: UIViewController {
 
+    @IBOutlet weak var ledView: UIView!
+    
     override func viewDidLoad() {
         super.viewDidLoad()
+        self.ledView.backgroundColor = UIColor.green
+        
         HTTPServerChecker.sharedInstance.setCallback { [weak self] (optional_error : Error?) in
          
             if let error = optional_error {
                 print("server down: \(error.localizedDescription)")
-                self?.showAlert(message: "server down")
+//                self?.showAlert(message: "server down")
+                self?.ledView.backgroundColor = UIColor.red
             }
             else{
-                self?.showAlert(message: "server up")
+//                self?.showAlert(message: "server up")
                 print("server up: ")
+                self?.ledView.backgroundColor = UIColor.green
             }
         }
         
