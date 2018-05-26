@@ -10,15 +10,22 @@ import UIKit
 
 class HTTPServerChecker {
     
-    private var isUp : Bool = true
+    //use filter "_debug" in console
+    var debug = false
+    private var isUp = true
     
     private var timer : Timer?
-    private let myserver = URL(string: "https://www.apple.com")
+    private let myserver = "https://www.apple.com/retail?query="
     private let foreverUpServer = URL(string: "https://www.google.es")
-    private var optionalHandler: (() -> Void)?
+    private var optionalHandler: ((_ error: Error?) -> Void)?
+    private var session: URLSession
     
     static let sharedInstance = HTTPServerChecker()
-    private init() {}
+    private init() {
+        let conf = URLSessionConfiguration.default
+        conf.timeoutIntervalForRequest = 1
+        session = URLSession(configuration: conf, delegate: nil, delegateQueue: OperationQueue())
+    }
     
     func start(){
         timer = Timer.scheduledTimer(timeInterval: 1.5, target: self,   selector: (#selector(HTTPServerChecker.updateTimer)), userInfo: nil, repeats: true)
@@ -34,26 +41,52 @@ class HTTPServerChecker {
     
     private func pingToServer() {
         
-        let task = URLSession.shared.dataTask(with: myserver!) {(data, response, optional_error) in
+        let url = URL(string: myserver+UUID().uuidString)
+        if self.debug {
+            print("_degug: " + (url?.absoluteString)!)
+        }
+        let task = session.dataTask(with: url!) {(data, response, optional_error) in
             if let httpResponse = response as? HTTPURLResponse {
-                print("_degug: myserver \(httpResponse.statusCode)")
-                if let handler = self.optionalHandler {
-                    handler()
+                
+                //server switchs from DOWN to UP
+                if !self.isUp {
+                    self.isUp = true
+                    if let handler = self.optionalHandler {
+                        handler(nil)
+                    }
                 }
+                
+                if self.debug {
+                    print("_degug: myserver \(httpResponse.statusCode)")
+                }
+                
+                return
+                
             }
             if let error = optional_error {
-                print("_degug: myserver \(error.localizedDescription)")
+                
+                //server switchs from UP to DOWN
+                if self.isUp {
+                    self.isUp = false
+                    if let handler = self.optionalHandler {
+                        handler(error)
+                    }
+                }
+                
+                if self.debug {
+                    print("_degug: myserver \(error.localizedDescription)")
+                }
             }
         }
        
         task.resume()
     }
     
-    func setCallback(handler: @escaping () -> Void) {
+    func setCallback(handler: @escaping (_ error:Error?) -> Void) {
         self.optionalHandler = handler
     }
     
-    //is not tested, could fail 
+    //is not tested, could fail
     func isMyServerUp() -> Bool {
         return self.isUp
     }

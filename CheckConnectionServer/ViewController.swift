@@ -12,14 +12,22 @@ class ViewController: UIViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        HTTPServerChecker.sharedInstance.setCallback {
-            
+        HTTPServerChecker.sharedInstance.setCallback { [weak self] (optional_error : Error?) in
+         
+            if let error = optional_error {
+                print("server down: \(error.localizedDescription)")
+                self?.showAlert(message: "server down")
+            }
+            else{
+                self?.showAlert(message: "server up")
+                print("server up: ")
+            }
         }
         
     }
 
-    func showAlert(){
-        let alert = UIAlertController(title: "Server Checker", message: "Your server is up!", preferredStyle: .alert)
+    func showAlert(message:String){
+        let alert = UIAlertController(title: "Server Checker", message: message, preferredStyle: .alert)
         
         alert.addAction(UIAlertAction(title: "Ok", style: .default, handler: nil))
         
