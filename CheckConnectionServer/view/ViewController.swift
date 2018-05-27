@@ -11,6 +11,7 @@ import UIKit
 class ViewController: UIViewController {
 
     @IBOutlet weak var ledView: UIView!
+    @IBOutlet weak var tv_log: UITextView!
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -22,6 +23,7 @@ class ViewController: UIViewController {
                 print("server down: \(error.localizedDescription)")
 //                self?.showAlert(message: "server down")
                 self?.ledView.backgroundColor = UIColor.red
+                self?.tv_log.text = (self?.tv_log.text)! + error.localizedDescription + "\n"
             }
             else{
 //                self?.showAlert(message: "server up")

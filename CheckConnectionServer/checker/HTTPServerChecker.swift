@@ -13,6 +13,7 @@ class HTTPServerChecker {
     //use filter "_debug" in console
     var debug = false
     private var isUp = true
+//    private var successful_connections : AtomicCounter;
     
     private var timer : Timer?
     private let myserver = "https://www.apple.com/retail?query="
@@ -23,12 +24,13 @@ class HTTPServerChecker {
     static let sharedInstance = HTTPServerChecker()
     private init() {
         let conf = URLSessionConfiguration.default
-        conf.timeoutIntervalForRequest = 1
+        conf.timeoutIntervalForRequest = 2
         session = URLSession(configuration: conf, delegate: nil, delegateQueue: OperationQueue())
+//        successful_connections = AtomicCounter(value: 1)
     }
     
     func start(){
-        timer = Timer.scheduledTimer(timeInterval: 1.5, target: self,   selector: (#selector(HTTPServerChecker.updateTimer)), userInfo: nil, repeats: true)
+        timer = Timer.scheduledTimer(timeInterval: 3, target: self,   selector: (#selector(HTTPServerChecker.updateTimer)), userInfo: nil, repeats: true)
     }
     
     func destroy(){
@@ -41,16 +43,24 @@ class HTTPServerChecker {
     
     private func pingToServer() {
         
+//        let x = self.successful_connections.incrementAndGet()
+//        if x > 10 && x % 5 != 0 {
+//            print("_degug: ac \(x)")
+//            return
+//        }
+        
         let url = URL(string: myserver+UUID().uuidString)
         if self.debug {
             print("_degug: " + (url?.absoluteString)!)
         }
-        let task = session.dataTask(with: url!) {(data, response, optional_error) in
+        
+        let task = session.dataTask(with: url!) { (data, response, optional_error) in
             if let httpResponse = response as? HTTPURLResponse {
                 
                 //server switchs from DOWN to UP
                 if !self.isUp {
                     self.isUp = true
+//                    self.successful_connections.value = 0
                     print("_degug: TRANSITION UP")
                     if let handler = self.optionalHandler {
                         DispatchQueue.main.async{
@@ -58,6 +68,7 @@ class HTTPServerChecker {
                         }
                     }
                 }
+                
                 
                 if self.debug {
                     print("_degug: myserver \(httpResponse.statusCode)")
